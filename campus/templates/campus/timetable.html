@@ -1,0 +1,6 @@
+{% extends 'campus/base.html' %}
+{% block title %}Timetable | CampusIQ{% endblock %}
+{% block content %}
+<div class="dashboard-head"><div><div class="eyebrow">CLASS SCHEDULE</div><h1>Weekly timetable</h1><p>{{ classroom.name|default:'Class' }} · {{ classroom.room_number|default:'Room not set' }}</p></div></div>
+<div class="timetable-wrap"><table class="timetable"><thead><tr><th>Day</th>{% for p in periods %}<th>Period {{ p }}</th>{% endfor %}</tr></thead><tbody>{% for day in days %}<tr><th>{{ day.1 }}</th>{% for p in periods %}<td>{% for k,e in grid.items %}{% if k.0 == day.0 and k.1 == p %}<strong>{{ e.display_subject }}</strong><small>{{ e.time }}</small>{% if e.room %}<small>{{ e.room }}</small>{% endif %}{% endif %}{% endfor %}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>
+{% endblock %}

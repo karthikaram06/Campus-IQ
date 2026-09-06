@@ -1,0 +1,6 @@
+{% extends 'campus/base.html' %}
+{% block title %}Attendance | CampusIQ{% endblock %}
+{% block content %}
+<div class="dashboard-head"><div><div class="eyebrow">ATTENDANCE</div><h1>Your attendance</h1><p>Only your own attendance records are visible here.</p></div><div class="attendance-big {% if overall >= 75 %}good{% else %}bad{% endif %}">{{ overall }}%</div></div>
+<section class="attendance-grid">{% for row in rows %}<article class="attendance-card"><div><strong>{{ row.subject.code }}</strong><h3>{{ row.subject.name }}</h3></div><div class="progress"><span style="width:{{ row.percentage }}%"></span></div><div class="attendance-meta"><b>{{ row.percentage }}%</b><span>{{ row.total }} classes recorded</span></div><div class="absence-list"><h4>Absent dates</h4>{% for a in row.absent %}<span>{{ a.date }}</span>{% empty %}<em>No absences recorded.</em>{% endfor %}</div></article>{% empty %}<div class="empty panel">Attendance records will appear after your teacher takes attendance.</div>{% endfor %}</section>
+{% endblock %}

@@ -1,0 +1,1434 @@
+{% extends 'campus/base.html' %}
+
+{% block title %}AI Assistant | CampusIQ{% endblock %}
+
+{% block content %}
+
+<style>
+    /* =========================================================
+       CAMPUSIQ AI
+       MODERN AI THEME
+       ========================================================= */
+
+    .ai-page {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 20px 10px 50px;
+    }
+
+    /* =========================
+       HERO
+       ========================= */
+
+    .ai-hero {
+        position: relative;
+        overflow: hidden;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 30px;
+        padding: 38px;
+        margin-bottom: 24px;
+        border-radius: 28px;
+
+        background:
+            radial-gradient(
+                circle at 85% 20%,
+                rgba(139, 92, 246, 0.35),
+                transparent 35%
+            ),
+            linear-gradient(
+                135deg,
+                #0f1025,
+                #171735 55%,
+                #111827
+            );
+
+        color: white;
+        box-shadow: 0 20px 50px rgba(15, 16, 37, 0.25);
+    }
+
+    .ai-hero::before {
+        content: "";
+        position: absolute;
+
+        width: 220px;
+        height: 220px;
+
+        border-radius: 50%;
+
+        background: rgba(99, 102, 241, 0.12);
+
+        top: -100px;
+        right: 180px;
+
+        filter: blur(5px);
+    }
+
+    .ai-hero-content {
+        position: relative;
+        z-index: 2;
+    }
+
+    .ai-eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 1.8px;
+
+        color: #c4b5fd;
+
+        margin-bottom: 10px;
+    }
+
+    .ai-eyebrow::before {
+        content: "✦";
+        font-size: 14px;
+    }
+
+    .ai-hero h1 {
+        margin: 0;
+
+        font-size: clamp(28px, 5vw, 46px);
+        line-height: 1.1;
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .ai-hero p {
+        margin: 14px 0 0;
+
+        max-width: 650px;
+
+        color: #cbd5e1;
+
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+    /* =========================
+       AI ORB
+       ========================= */
+
+    .ai-orb {
+        position: relative;
+        z-index: 2;
+
+        flex-shrink: 0;
+
+        width: 105px;
+        height: 105px;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 50%;
+
+        background:
+            linear-gradient(
+                135deg,
+                #8b5cf6,
+                #6366f1,
+                #06b6d4
+            );
+
+        box-shadow:
+            0 0 0 10px rgba(139, 92, 246, 0.08),
+            0 0 45px rgba(99, 102, 241, 0.5);
+
+        font-size: 27px;
+        font-weight: 900;
+        color: white;
+    }
+
+    .ai-orb::after {
+        content: "";
+
+        position: absolute;
+        inset: 8px;
+
+        border: 1px solid rgba(255, 255, 255, 0.25);
+
+        border-radius: 50%;
+    }
+
+    /* =========================
+       MAIN AI BOX
+       ========================= */
+
+    .ai-box {
+        background: #ffffff;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 26px;
+
+        padding: 28px;
+
+        box-shadow: 0 15px 45px rgba(15, 23, 42, 0.08);
+    }
+
+    /* =========================
+       SECTION TITLE
+       ========================= */
+
+    .ai-section-title {
+        margin-bottom: 14px;
+    }
+
+    .ai-section-title h2 {
+        margin: 0;
+
+        font-size: 19px;
+        font-weight: 800;
+
+        color: #111827;
+    }
+
+    .ai-section-title p {
+        margin: 5px 0 0;
+
+        color: #6b7280;
+
+        font-size: 13px;
+    }
+
+    /* =========================
+       MODE BUTTONS
+       ========================= */
+
+    .mode-row {
+        display: grid;
+
+        grid-template-columns: repeat(5, 1fr);
+
+        gap: 10px;
+
+        margin-bottom: 22px;
+    }
+
+    .mode-row button {
+        min-height: 52px;
+
+        border: 1px solid #e5e7eb;
+
+        border-radius: 14px;
+
+        background: #f8fafc;
+
+        color: #374151;
+
+        font-size: 13px;
+        font-weight: 750;
+
+        cursor: pointer;
+
+        transition:
+            transform 0.2s ease,
+            border-color 0.2s ease,
+            background 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .mode-row button:hover {
+        transform: translateY(-2px);
+
+        border-color: #8b5cf6;
+
+        background: #f5f3ff;
+
+        color: #6d28d9;
+
+        box-shadow: 0 8px 20px rgba(109, 40, 217, 0.10);
+    }
+
+    .mode-row button:focus {
+        outline: none;
+
+        border-color: #7c3aed;
+
+        box-shadow: 0 0 0 3px rgba(124, 58, 237, 0.12);
+    }
+
+    /* Mode icons */
+
+    .mode-row button:nth-child(1)::before {
+        content: "💡 ";
+    }
+
+    .mode-row button:nth-child(2)::before {
+        content: "🎤 ";
+    }
+
+    .mode-row button:nth-child(3)::before {
+        content: "💼 ";
+    }
+
+    .mode-row button:nth-child(4)::before {
+        content: "🚀 ";
+    }
+
+    .mode-row button:nth-child(5)::before {
+        content: "🎯 ";
+    }
+
+    /* =========================
+       INPUT
+       ========================= */
+
+    .ai-input-wrapper {
+        position: relative;
+    }
+
+    .ai-input-label {
+        display: block;
+
+        margin-bottom: 9px;
+
+        font-size: 13px;
+        font-weight: 800;
+
+        color: #374151;
+    }
+
+    textarea[name="question"] {
+        width: 100%;
+
+        min-height: 145px;
+
+        box-sizing: border-box;
+
+        resize: vertical;
+
+        padding: 17px 18px;
+
+        border: 1px solid #dbe0e8;
+
+        border-radius: 18px;
+
+        background: #f8fafc;
+
+        color: #111827;
+
+        font-family: inherit;
+
+        font-size: 14px;
+
+        line-height: 1.7;
+
+        transition:
+            border-color 0.2s ease,
+            box-shadow 0.2s ease,
+            background 0.2s ease;
+    }
+
+    textarea[name="question"]::placeholder {
+        color: #9ca3af;
+    }
+
+    textarea[name="question"]:focus {
+        outline: none;
+
+        background: #ffffff;
+
+        border-color: #8b5cf6;
+
+        box-shadow:
+            0 0 0 4px rgba(139, 92, 246, 0.10);
+    }
+
+    /* =========================
+       SUBMIT
+       ========================= */
+
+    .ai-submit-row {
+        display: flex;
+
+        justify-content: flex-end;
+
+        margin-top: 14px;
+    }
+
+    .ai-submit {
+        border: none;
+
+        min-width: 160px;
+
+        padding: 13px 21px;
+
+        border-radius: 13px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #7c3aed,
+                #4f46e5
+            );
+
+        color: white;
+
+        font-size: 14px;
+        font-weight: 800;
+
+        cursor: pointer;
+
+        box-shadow:
+            0 10px 25px rgba(79, 70, 229, 0.22);
+
+        transition:
+            transform 0.2s ease,
+            box-shadow 0.2s ease;
+    }
+
+    .ai-submit:hover {
+        transform: translateY(-2px);
+
+        box-shadow:
+            0 14px 30px rgba(79, 70, 229, 0.30);
+    }
+
+    .ai-submit:active {
+        transform: translateY(0);
+    }
+
+    /* =========================
+       ANSWER CARD
+       ========================= */
+
+    .ai-answer {
+        margin-top: 30px;
+
+        padding: 24px;
+
+        border-radius: 22px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #f5f3ff,
+                #eef2ff
+            );
+
+        border: 1px solid #ddd6fe;
+
+        position: relative;
+
+        overflow: hidden;
+    }
+
+    .ai-answer::before {
+        content: "";
+
+        position: absolute;
+
+        top: 0;
+        left: 0;
+
+        width: 5px;
+        height: 100%;
+
+        background:
+            linear-gradient(
+                180deg,
+                #8b5cf6,
+                #4f46e5
+            );
+    }
+
+    /* =========================
+       ANSWER HEADER
+       ========================= */
+
+    .answer-header {
+        display: flex;
+
+        align-items: center;
+
+        gap: 12px;
+
+        margin-bottom: 18px;
+    }
+
+    .answer-icon {
+        width: 42px;
+        height: 42px;
+
+        flex-shrink: 0;
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+
+        border-radius: 12px;
+
+        background:
+            linear-gradient(
+                135deg,
+                #7c3aed,
+                #4f46e5
+            );
+
+        color: white;
+
+        font-size: 18px;
+
+        box-shadow:
+            0 8px 18px rgba(79, 70, 229, 0.18);
+    }
+
+    .answer-title {
+        font-size: 14px;
+
+        font-weight: 850;
+
+        color: #4c1d95;
+
+        letter-spacing: 0.3px;
+    }
+
+    .answer-subtitle {
+        margin-top: 2px;
+
+        font-size: 12px;
+
+        color: #6b7280;
+    }
+
+    /* =========================
+       FORMATTED AI ANSWER
+       ========================= */
+
+    .answer-content {
+        position: relative;
+
+        color: #1f2937;
+
+        font-size: 14px;
+
+        line-height: 1.8;
+
+        overflow-wrap: anywhere;
+    }
+
+    .answer-content p {
+        margin: 0 0 13px;
+    }
+
+    .answer-content p:last-child {
+        margin-bottom: 0;
+    }
+
+    .answer-content h1,
+    .answer-content h2,
+    .answer-content h3,
+    .answer-content h4 {
+        margin: 18px 0 9px;
+
+        color: #4c1d95;
+
+        line-height: 1.35;
+    }
+
+    .answer-content h1 {
+        font-size: 21px;
+    }
+
+    .answer-content h2 {
+        font-size: 19px;
+    }
+
+    .answer-content h3 {
+        font-size: 17px;
+    }
+
+    .answer-content h4 {
+        font-size: 15px;
+    }
+
+    .answer-content strong {
+        color: #4c1d95;
+
+        font-weight: 850;
+    }
+
+    .answer-content em {
+        color: #374151;
+
+        font-style: italic;
+    }
+
+    .answer-content ul,
+    .answer-content ol {
+        margin: 8px 0 15px;
+
+        padding-left: 24px;
+    }
+
+    .answer-content li {
+        margin-bottom: 7px;
+
+        padding-left: 4px;
+    }
+
+    .answer-content li::marker {
+        color: #7c3aed;
+        font-weight: 800;
+    }
+
+    .answer-content hr {
+        border: none;
+
+        border-top: 1px solid #c4b5fd;
+
+        margin: 18px 0;
+    }
+
+    .answer-content code {
+        padding: 2px 6px;
+
+        border-radius: 6px;
+
+        background: #e9e5ff;
+
+        color: #5b21b6;
+
+        font-size: 13px;
+    }
+
+    .answer-content pre {
+        margin: 14px 0;
+
+        padding: 14px;
+
+        overflow-x: auto;
+
+        border-radius: 12px;
+
+        background: #111827;
+
+        color: #f9fafb;
+
+        font-size: 13px;
+
+        line-height: 1.65;
+    }
+
+    .answer-content pre code {
+        padding: 0;
+
+        background: transparent;
+
+        color: inherit;
+    }
+
+    /* =========================
+       QUICK HELP
+       ========================= */
+
+    .ai-tips {
+        display: grid;
+
+        grid-template-columns: repeat(3, 1fr);
+
+        gap: 12px;
+
+        margin-top: 20px;
+    }
+
+    .ai-tip {
+        padding: 15px;
+
+        border-radius: 15px;
+
+        background: #f8fafc;
+
+        border: 1px solid #eef0f4;
+    }
+
+    .ai-tip-title {
+        font-size: 12px;
+
+        font-weight: 800;
+
+        color: #374151;
+
+        margin-bottom: 5px;
+    }
+
+    .ai-tip-text {
+        font-size: 11px;
+
+        line-height: 1.6;
+
+        color: #6b7280;
+    }
+
+    /* =========================
+       ERROR MESSAGE
+       ========================= */
+
+    .ai-error {
+        margin-top: 16px;
+
+        padding: 12px 15px;
+
+        border-radius: 12px;
+
+        background: #fef2f2;
+
+        border: 1px solid #fecaca;
+
+        color: #b91c1c;
+
+        font-size: 13px;
+    }
+
+    /* =========================
+       MOBILE
+       ========================= */
+
+    @media (max-width: 800px) {
+
+        .ai-hero {
+            padding: 28px;
+        }
+
+        .ai-orb {
+            width: 80px;
+            height: 80px;
+
+            font-size: 22px;
+        }
+
+        .mode-row {
+            grid-template-columns: repeat(2, 1fr);
+        }
+
+        .ai-tips {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    @media (max-width: 560px) {
+
+        .ai-page {
+            padding: 10px 5px 30px;
+        }
+
+        .ai-hero {
+            padding: 24px;
+
+            border-radius: 22px;
+        }
+
+        .ai-hero p {
+            font-size: 13px;
+        }
+
+        .ai-orb {
+            display: none;
+        }
+
+        .ai-box {
+            padding: 18px;
+
+            border-radius: 20px;
+        }
+
+        .mode-row {
+            grid-template-columns: 1fr 1fr;
+        }
+
+        .mode-row button {
+            font-size: 12px;
+        }
+
+        .ai-submit-row {
+            justify-content: stretch;
+        }
+
+        .ai-submit {
+            width: 100%;
+        }
+
+        .ai-answer {
+            padding: 19px;
+        }
+    }
+</style>
+
+
+<div class="ai-page">
+
+    <!-- =====================================================
+         AI HERO
+         ===================================================== -->
+
+    <div class="ai-hero">
+
+        <div class="ai-hero-content">
+
+            <div class="ai-eyebrow">
+                CAMPUSIQ AI
+            </div>
+
+            <h1>
+                Your academic copilot.
+            </h1>
+
+            <p>
+                Get simple, practical help with your subjects,
+                interviews, placements, projects and career planning.
+            </p>
+
+        </div>
+
+        <div class="ai-orb">
+            AI
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MAIN AI BOX
+         ===================================================== -->
+
+    <section class="ai-box">
+
+        <div class="ai-section-title">
+
+            <h2>
+                What can I help you with?
+            </h2>
+
+            <p>
+                Choose a topic or type your own question below.
+            </p>
+
+        </div>
+
+
+        <form method="post">
+
+            {% csrf_token %}
+
+
+            <!-- =================================================
+                 QUICK TOPICS
+                 ================================================= -->
+
+            <div class="mode-row">
+
+                <button
+                    name="mode"
+                    value="general"
+                    type="submit">
+
+                    General
+
+                </button>
+
+
+                <button
+                    name="mode"
+                    value="interview"
+                    type="submit">
+
+                    Interview
+
+                </button>
+
+
+                <button
+                    name="mode"
+                    value="placement"
+                    type="submit">
+
+                    Placement
+
+                </button>
+
+
+                <button
+                    name="mode"
+                    value="project"
+                    type="submit">
+
+                    Project
+
+                </button>
+
+
+                <button
+                    name="mode"
+                    value="career"
+                    type="submit">
+
+                    Career
+
+                </button>
+
+            </div>
+
+
+            <!-- =================================================
+                 QUESTION
+                 ================================================= -->
+
+            <div class="ai-input-wrapper">
+
+                <label class="ai-input-label">
+                    💬 Ask your question
+                </label>
+
+                <textarea
+                    name="question"
+                    rows="5"
+                    placeholder="For example: How should I prepare for my placement interview in 3 months?"
+                >{{ question|default:"" }}</textarea>
+
+            </div>
+
+
+            <!-- =================================================
+                 SUBMIT
+                 ================================================= -->
+
+            <div class="ai-submit-row">
+
+                <button
+                    class="ai-submit"
+                    type="submit">
+
+                    ✨ Get AI Answer →
+
+                </button>
+
+            </div>
+
+        </form>
+
+
+        <!-- =====================================================
+             AI RESPONSE
+             ===================================================== -->
+
+        {% if answer %}
+
+        <div class="ai-answer">
+
+            <div class="answer-header">
+
+                <div class="answer-icon">
+                    ✦
+                </div>
+
+                <div>
+
+                    <div class="answer-title">
+                        CAMPUSIQ AI RESPONSE
+                    </div>
+
+                    <div class="answer-subtitle">
+                        Here's a helpful answer for you
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!--
+                The raw AI response is kept hidden.
+                JavaScript reads it as plain text and
+                safely converts simple Markdown into HTML.
+            -->
+
+            <div
+                id="raw-ai-answer"
+                style="display:none;"
+            >{{ answer }}</div>
+
+
+            <div
+                id="formatted-ai-answer"
+                class="answer-content"
+            ></div>
+
+        </div>
+
+        {% endif %}
+
+
+        <!-- =====================================================
+             QUICK HELP
+             ===================================================== -->
+
+        {% if not answer %}
+
+        <div class="ai-tips">
+
+            <div class="ai-tip">
+
+                <div class="ai-tip-title">
+                    📚 Study Help
+                </div>
+
+                <div class="ai-tip-text">
+                    Ask for explanations, study plans,
+                    important topics or revision strategies.
+                </div>
+
+            </div>
+
+
+            <div class="ai-tip">
+
+                <div class="ai-tip-title">
+                    💼 Placement Help
+                </div>
+
+                <div class="ai-tip-text">
+                    Get guidance for aptitude, coding,
+                    technical interviews and HR rounds.
+                </div>
+
+            </div>
+
+
+            <div class="ai-tip">
+
+                <div class="ai-tip-title">
+                    🚀 Project Help
+                </div>
+
+                <div class="ai-tip-text">
+                    Ask for project ideas, technologies,
+                    features and implementation guidance.
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<script>
+    /* =========================================================
+       CAMPUSIQ AI MARKDOWN FORMATTER
+       ========================================================= */
+
+    function escapeHtml(text) {
+
+        const div = document.createElement("div");
+
+        div.textContent = text;
+
+        return div.innerHTML;
+    }
+
+
+    function formatAIResponse(rawText) {
+
+        if (!rawText) {
+            return "";
+        }
+
+        let text = rawText
+            .replace(/\r\n/g, "\n")
+            .replace(/\r/g, "\n")
+            .replace(/\\([*_\-#+.!])/g, "$1");
+
+
+        /*
+         ------------------------------------------------------
+         CODE BLOCKS
+         ------------------------------------------------------
+        */
+
+        const codeBlocks = [];
+
+        text = text.replace(
+            /```(?:[a-zA-Z0-9_+-]+)?\n?([\s\S]*?)```/g,
+            function(match, code) {
+
+                const placeholder =
+                    "___CODEBLOCK_" +
+                    codeBlocks.length +
+                    "___";
+
+                codeBlocks.push(
+                    "<pre><code>" +
+                    escapeHtml(code.trim()) +
+                    "</code></pre>"
+                );
+
+                return placeholder;
+            }
+        );
+
+
+        /*
+         ------------------------------------------------------
+         ESCAPE HTML
+         ------------------------------------------------------
+        */
+
+        text = escapeHtml(text);
+
+
+        /*
+         ------------------------------------------------------
+         HORIZONTAL RULES
+         ------------------------------------------------------
+        */
+
+        text = text.replace(
+            /^[ \t]*(---+|\*\*\*+|___+)[ \t]*$/gm,
+            "___HR___"
+        );
+
+
+        /*
+         ------------------------------------------------------
+         HEADINGS
+         ------------------------------------------------------
+        */
+
+        text = text.replace(
+            /^######[ \t]+(.+)$/gm,
+            "<h4>$1</h4>"
+        );
+
+        text = text.replace(
+            /^#####[ \t]+(.+)$/gm,
+            "<h4>$1</h4>"
+        );
+
+        text = text.replace(
+            /^####[ \t]+(.+)$/gm,
+            "<h4>$1</h4>"
+        );
+
+        text = text.replace(
+            /^###[ \t]+(.+)$/gm,
+            "<h3>$1</h3>"
+        );
+
+        text = text.replace(
+            /^##[ \t]+(.+)$/gm,
+            "<h2>$1</h2>"
+        );
+
+        text = text.replace(
+            /^#[ \t]+(.+)$/gm,
+            "<h1>$1</h1>"
+        );
+
+
+        /*
+         ------------------------------------------------------
+         BOLD + ITALIC
+         ------------------------------------------------------
+        */
+
+        text = text.replace(
+            /\*\*(.+?)\*\*/g,
+            "<strong>$1</strong>"
+        );
+
+        text = text.replace(
+            /__(.+?)__/g,
+            "<strong>$1</strong>"
+        );
+
+        text = text.replace(
+            /(?<!\*)\*([^*\n]+)\*(?!\*)/g,
+            "<em>$1</em>"
+        );
+
+        text = text.replace(
+            /(?<!_)_([^_\n]+)_(?!_)/g,
+            "<em>$1</em>"
+        );
+
+
+        /*
+         ------------------------------------------------------
+         INLINE CODE
+         ------------------------------------------------------
+        */
+
+        text = text.replace(
+            /`([^`\n]+)`/g,
+            "<code>$1</code>"
+        );
+
+
+        /*
+         ------------------------------------------------------
+         NUMBERED LISTS
+         ------------------------------------------------------
+        */
+
+        let lines = text.split("\n");
+
+        let result = [];
+
+        let inOrderedList = false;
+        let inUnorderedList = false;
+        let paragraphBuffer = [];
+
+
+        function flushParagraph() {
+
+            if (paragraphBuffer.length === 0) {
+                return;
+            }
+
+            const paragraphText =
+                paragraphBuffer.join("<br>");
+
+            result.push(
+                "<p>" + paragraphText + "</p>"
+            );
+
+            paragraphBuffer = [];
+        }
+
+
+        function closeLists() {
+
+            if (inOrderedList) {
+                result.push("</ol>");
+                inOrderedList = false;
+            }
+
+            if (inUnorderedList) {
+                result.push("</ul>");
+                inUnorderedList = false;
+            }
+        }
+
+
+        for (let i = 0; i < lines.length; i++) {
+
+            let line = lines[i];
+
+            let trimmed = line.trim();
+
+
+            /*
+             -----------------------------------------------
+             EMPTY LINE
+             -----------------------------------------------
+            */
+
+            if (trimmed === "") {
+
+                flushParagraph();
+
+                closeLists();
+
+                continue;
+            }
+
+
+            /*
+             -----------------------------------------------
+             HR
+             -----------------------------------------------
+            */
+
+            if (trimmed === "___HR___") {
+
+                flushParagraph();
+
+                closeLists();
+
+                result.push("<hr>");
+
+                continue;
+            }
+
+
+            /*
+             -----------------------------------------------
+             HEADING
+             -----------------------------------------------
+            */
+
+            if (
+                /^<h[1-4]>/.test(trimmed)
+            ) {
+
+                flushParagraph();
+
+                closeLists();
+
+                result.push(trimmed);
+
+                continue;
+            }
+
+
+            /*
+             -----------------------------------------------
+             ORDERED LIST
+             -----------------------------------------------
+            */
+
+            const orderedMatch =
+                trimmed.match(/^\d+[.)]\s+(.+)$/);
+
+            if (orderedMatch) {
+
+                flushParagraph();
+
+                if (!inOrderedList) {
+
+                    if (inUnorderedList) {
+                        result.push("</ul>");
+                        inUnorderedList = false;
+                    }
+
+                    result.push("<ol>");
+
+                    inOrderedList = true;
+                }
+
+                result.push(
+                    "<li>" +
+                    orderedMatch[1] +
+                    "</li>"
+                );
+
+                continue;
+            }
+
+
+            /*
+             -----------------------------------------------
+             UNORDERED LIST
+             -----------------------------------------------
+            */
+
+            const unorderedMatch =
+                trimmed.match(/^[-*•]\s+(.+)$/);
+
+            if (unorderedMatch) {
+
+                flushParagraph();
+
+                if (!inUnorderedList) {
+
+                    if (inOrderedList) {
+                        result.push("</ol>");
+                        inOrderedList = false;
+                    }
+
+                    result.push("<ul>");
+
+                    inUnorderedList = true;
+                }
+
+                result.push(
+                    "<li>" +
+                    unorderedMatch[1] +
+                    "</li>"
+                );
+
+                continue;
+            }
+
+
+            /*
+             -----------------------------------------------
+             NORMAL TEXT
+             -----------------------------------------------
+            */
+
+            closeLists();
+
+            paragraphBuffer.push(line);
+        }
+
+
+        flushParagraph();
+
+        closeLists();
+
+
+        /*
+         ------------------------------------------------------
+         RESTORE CODE BLOCKS
+         ------------------------------------------------------
+        */
+
+        let finalHtml = result.join("\n");
+
+
+        finalHtml = finalHtml.replace(
+            /___CODEBLOCK_(\d+)___/g,
+            function(match, index) {
+
+                return codeBlocks[
+                    Number(index)
+                ] || "";
+            }
+        );
+
+
+        return finalHtml;
+    }
+
+
+    /*
+     =========================================================
+     RENDER RESPONSE
+     =========================================================
+    */
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function() {
+
+            const rawAnswer =
+                document.getElementById(
+                    "raw-ai-answer"
+                );
+
+            const formattedAnswer =
+                document.getElementById(
+                    "formatted-ai-answer"
+                );
+
+
+            if (
+                rawAnswer &&
+                formattedAnswer
+            ) {
+
+                const rawText =
+                    rawAnswer.textContent || "";
+
+
+                formattedAnswer.innerHTML =
+                    formatAIResponse(rawText);
+            }
+
+        }
+    );
+</script>
+
+{% endblock %}

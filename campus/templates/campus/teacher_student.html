@@ -1,0 +1,363 @@
+{% extends 'campus/base.html' %}
+{% block title %}Manage {{ student.user.get_full_name|default:student.user.username }} | CampusIQ{% endblock %}
+
+{% block content %}
+<style>
+    .manage-page { max-width: 1280px; margin: 0 auto; }
+    .manage-head { display:flex; justify-content:space-between; align-items:flex-start; gap:20px; margin-bottom:24px; }
+    .manage-title { display:flex; gap:16px; align-items:center; }
+    .avatar { width:64px; height:64px; border-radius:18px; display:flex; align-items:center; justify-content:center; font-size:24px; font-weight:800; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.14); }
+    .eyebrow { font-size:12px; letter-spacing:.14em; opacity:.7; font-weight:800; }
+    .muted { opacity:.7; }
+    .grid-2 { display:grid; grid-template-columns:1.3fr .7fr; gap:20px; }
+    .grid-2.equal { grid-template-columns:1fr 1fr; }
+    .panel { border:1px solid rgba(255,255,255,.10); border-radius:20px; padding:22px; background:rgba(255,255,255,.035); margin-bottom:20px; }
+    .panel h2 { margin:4px 0 18px; }
+    .stats { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .stat { padding:18px; border-radius:16px; border:1px solid rgba(255,255,255,.08); background:rgba(0,0,0,.10); }
+    .stat span { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.1em; opacity:.65; }
+    .stat strong { display:block; font-size:30px; margin-top:5px; }
+    .form-grid { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; }
+    .field { display:flex; flex-direction:column; gap:7px; }
+    .field.full { grid-column:1/-1; }
+    label { font-size:13px; font-weight:700; opacity:.8; }
+    input, select, textarea { width:100%; box-sizing:border-box; padding:11px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:rgba(0,0,0,.16); color:inherit; }
+    textarea { min-height:90px; resize:vertical; }
+    input:focus, select:focus, textarea:focus { outline:none; border-color:rgba(255,255,255,.34); }
+    .btn-row { display:flex; gap:10px; align-items:center; flex-wrap:wrap; margin-top:16px; }
+    button, .btn { border:0; border-radius:12px; padding:10px 14px; font-weight:800; cursor:pointer; text-decoration:none; display:inline-block; }
+    .btn-primary { background:#fff; color:#111; }
+    .btn-danger { background:#7f1d1d; color:#fff; }
+    .btn-soft { background:rgba(255,255,255,.08); color:inherit; }
+    .table-wrap { overflow:auto; }
+    table { width:100%; border-collapse:collapse; min-width:760px; }
+    th, td { padding:11px 10px; text-align:left; border-bottom:1px solid rgba(255,255,255,.08); vertical-align:middle; }
+    th { font-size:12px; text-transform:uppercase; letter-spacing:.08em; opacity:.65; }
+    td input, td select { min-width:86px; padding:9px 10px; }
+    .inline { display:flex; gap:8px; align-items:center; }
+    .msg { padding:12px 14px; border-radius:12px; margin-bottom:14px; border:1px solid rgba(255,255,255,.10); }
+    .empty { opacity:.65; padding:14px 0; }
+    .small { font-size:12px; opacity:.68; }
+    @media (max-width: 900px) { .grid-2, .grid-2.equal, .form-grid { grid-template-columns:1fr; } .manage-head { flex-direction:column; } }
+</style>
+
+<div class="manage-page">
+    {% if messages %}
+        {% for message in messages %}
+            <div class="msg">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+
+    <div class="manage-head">
+        <div class="manage-title">
+            <div class="avatar">{{ student.user.first_name|slice:':1'|upper }}</div>
+            <div>
+                <div class="eyebrow">TEACHER · STUDENT MANAGEMENT</div>
+                <h1>{{ student.user.get_full_name|default:student.user.username }}</h1>
+                <div class="muted">{{ student.register_number }} · {{ student.classroom.name|default:'No classroom' }}</div>
+            </div>
+        </div>
+        <a class="btn btn-soft" href="{% url 'teacher_dashboard' %}">← Back to dashboard</a>
+    </div>
+
+    <div class="grid-2">
+        <section class="panel">
+            <div class="eyebrow">PROFILE & ACCOUNT</div>
+            <h2>Edit student</h2>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="update_profile">
+                <div class="form-grid">
+                    <div class="field">
+                        <label>First name</label>
+                        <input type="text" name="first_name" value="{{ student.user.first_name }}" required>
+                    </div>
+                    <div class="field">
+                        <label>Last name</label>
+                        <input type="text" name="last_name" value="{{ student.user.last_name }}">
+                    </div>
+                    <div class="field">
+                        <label>Username</label>
+                        <input type="text" name="username" value="{{ student.user.username }}" required>
+                    </div>
+                    <div class="field">
+                        <label>Email</label>
+                        <input type="email" name="email" value="{{ student.email|default:student.user.email }}">
+                    </div>
+                    <div class="field">
+                        <label>Register number</label>
+                        <input type="text" name="register_number" value="{{ student.register_number }}" required>
+                    </div>
+                    <div class="field">
+                        <label>Phone</label>
+                        <input type="text" name="phone" value="{{ student.phone }}">
+                    </div>
+                    <div class="field full">
+                        <label>College</label>
+                        <input type="text" name="college" value="{{ student.college }}">
+                    </div>
+                    <div class="field">
+                        <label>Classroom</label>
+                        <select name="classroom_id" required>
+                            {% for classroom in assigned_classrooms %}
+                                <option value="{{ classroom.id }}" {% if classroom.id == student.classroom_id %}selected{% endif %}>
+                                    {{ classroom.name }} · {{ classroom.department.code }} · {{ classroom.year }} · {{ classroom.section }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="field">
+                        <label>Year</label>
+                        <input type="text" name="year" value="{{ student.year }}">
+                    </div>
+                    <div class="field">
+                        <label>Section</label>
+                        <input type="text" name="section" value="{{ student.section }}">
+                    </div>
+                    <div class="field">
+                        <label>CGPA</label>
+                        <input type="number" name="cgpa" value="{{ student.cgpa }}" min="0" max="10" step="0.01" required>
+                    </div>
+                    <div class="field">
+                        <label>New password <span class="small">(leave blank to keep current password)</span></label>
+                        <input type="password" name="new_password" minlength="8" autocomplete="new-password">
+                    </div>
+                    <div class="field">
+                        <label>Account</label>
+                        <div style="display:flex;gap:10px;align-items:center;padding:11px 0;">
+                            <input type="checkbox" name="account_active" style="width:auto;" {% if account_active %}checked{% endif %}>
+                            <span>Student can log in</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="btn-row">
+                    <button class="btn-primary" type="submit">Save profile & account</button>
+                </div>
+            </form>
+        </section>
+
+        <section>
+            <div class="stats">
+                <div class="stat">
+                    <span>CGPA</span>
+                    <strong>{{ student.cgpa }}</strong>
+                </div>
+                <div class="stat">
+                    <span>Absent days</span>
+                    <strong>{{ absent_days }}</strong>
+                </div>
+                <div class="stat">
+                    <span>Mark records</span>
+                    <strong>{{ marks|length }}</strong>
+                </div>
+                <div class="stat">
+                    <span>Projects</span>
+                    <strong>{{ projects|length }}</strong>
+                </div>
+            </div>
+            <div class="panel" style="margin-top:20px;">
+                <div class="eyebrow">ACCOUNT</div>
+                <h2>{{ student.user.username }}</h2>
+                <div class="muted">{{ student.user.email }}</div>
+                <div class="small" style="margin-top:10px;">The teacher can update the student's account details and reset the password from the form.</div>
+            </div>
+        </section>
+    </div>
+
+    <section class="panel">
+        <div class="eyebrow">ACADEMICS</div>
+        <h2>Manage marks</h2>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Subject</th><th>Internal / 50</th><th>External / 50</th><th>Total</th><th>Action</th></tr></thead>
+                <tbody>
+                {% for mark in marks %}
+                    <tr>
+                        <form id="mark-form-{{ mark.id }}" method="post"></form>
+                        <td><strong>{{ mark.subject.code }}</strong><div class="small">{{ mark.subject.name }}</div></td>
+                        <td><input form="mark-form-{{ mark.id }}" type="number" name="internal" value="{{ mark.internal }}" min="0" max="50"></td>
+                        <td><input form="mark-form-{{ mark.id }}" type="number" name="external" value="{{ mark.external }}" min="0" max="50"></td>
+                        <td><strong>{{ mark.total }}</strong></td>
+                        <td>
+                            <input form="mark-form-{{ mark.id }}" type="hidden" name="action" value="save_mark">
+                            <input form="mark-form-{{ mark.id }}" type="hidden" name="mark_id" value="{{ mark.id }}">
+                            <input form="mark-form-{{ mark.id }}" type="hidden" name="subject_id" value="{{ mark.subject_id }}">
+                            <input form="mark-form-{{ mark.id }}" type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <button class="btn-primary" form="mark-form-{{ mark.id }}" type="submit">Save</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="5" style="padding-top:0;border-bottom:0;">
+                            <form method="post" class="inline" onsubmit="return confirm('Delete this mark record?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_mark">
+                                <input type="hidden" name="mark_id" value="{{ mark.id }}">
+                                <button class="btn-danger" type="submit">Delete mark</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="5" class="empty">No mark records yet. Add one below.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <h3 style="margin-top:24px;">Add / create mark record</h3>
+        <form method="post">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="save_mark">
+            <div class="form-grid">
+                <div class="field">
+                    <label>Subject</label>
+                    <select name="subject_id" required>
+                        <option value="">Select subject</option>
+                        {% for subject in subjects %}
+                            <option value="{{ subject.id }}">{{ subject.code }} · {{ subject.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="field"><label>Internal / 50</label><input type="number" name="internal" min="0" max="50" value="0" required></div>
+                <div class="field"><label>External / 50</label><input type="number" name="external" min="0" max="50" value="0" required></div>
+            </div>
+            <div class="btn-row"><button class="btn-primary" type="submit">Add / Save mark</button></div>
+        </form>
+    </section>
+
+    <section class="panel">
+        <div class="eyebrow">ATTENDANCE</div>
+        <h2>Manage attendance</h2>
+        <div class="small" style="margin-bottom:14px;">Sunday is treated as a weekly holiday and cannot be recorded here.</div>
+        <div class="table-wrap">
+            <table>
+                <thead><tr><th>Date</th><th>Subject</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody>
+                {% for record in attendance %}
+                    <tr>
+                        <form id="attendance-form-{{ record.id }}" method="post"></form>
+                        <td><input form="attendance-form-{{ record.id }}" type="date" name="attendance_date" value="{{ record.date|date:'Y-m-d' }}" required></td>
+                        <td><strong>{{ record.subject.code }}</strong><div class="small">{{ record.subject.name }}</div></td>
+                        <td>
+                            <select form="attendance-form-{{ record.id }}" name="attendance_status">
+                                <option value="P" {% if record.status == 'P' %}selected{% endif %}>Present</option>
+                                <option value="A" {% if record.status == 'A' %}selected{% endif %}>Absent</option>
+                                <option value="L" {% if record.status == 'L' %}selected{% endif %}>Leave</option>
+                            </select>
+                        </td>
+                        <td>
+                            <input form="attendance-form-{{ record.id }}" type="hidden" name="action" value="save_attendance">
+                            <input form="attendance-form-{{ record.id }}" type="hidden" name="attendance_id" value="{{ record.id }}">
+                            <input form="attendance-form-{{ record.id }}" type="hidden" name="attendance_subject_id" value="{{ record.subject_id }}">
+                            <input form="attendance-form-{{ record.id }}" type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <button class="btn-primary" form="attendance-form-{{ record.id }}" type="submit">Save</button>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td colspan="4" style="padding-top:0;border-bottom:0;">
+                            <form method="post" class="inline" onsubmit="return confirm('Delete this attendance record?');">
+                                {% csrf_token %}
+                                <input type="hidden" name="action" value="delete_attendance">
+                                <input type="hidden" name="attendance_id" value="{{ record.id }}">
+                                <button class="btn-danger" type="submit">Delete record</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr><td colspan="4" class="empty">No attendance records yet.</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </section>
+
+    <div class="grid-2 equal">
+        <section class="panel">
+            <div class="eyebrow">ACHIEVEMENTS</div>
+            <h2>Manage achievements</h2>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_achievement">
+                <div class="form-grid">
+                    <div class="field full"><label>Title</label><input type="text" name="achievement_title" required></div>
+                    <div class="field"><label>Issuer</label><input type="text" name="achievement_issuer"></div>
+                    <div class="field"><label>Date</label><input type="date" name="achievement_date"></div>
+                    <div class="field full"><label>Description</label><textarea name="achievement_description"></textarea></div>
+                </div>
+                <div class="btn-row"><button class="btn-primary" type="submit">Add achievement</button></div>
+            </form>
+
+            <div style="margin-top:22px;">
+                {% for item in achievements %}
+                    <div class="panel" style="margin:0 0 14px; padding:16px;">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="save_achievement">
+                            <input type="hidden" name="achievement_id" value="{{ item.id }}">
+                            <div class="form-grid">
+                                <div class="field full"><label>Title</label><input type="text" name="achievement_title" value="{{ item.title }}" required></div>
+                                <div class="field"><label>Issuer</label><input type="text" name="achievement_issuer" value="{{ item.issuer }}"></div>
+                                <div class="field"><label>Date</label><input type="date" name="achievement_date" value="{{ item.date|date:'Y-m-d' }}"></div>
+                                <div class="field full"><label>Description</label><textarea name="achievement_description">{{ item.description }}</textarea></div>
+                            </div>
+                            <div class="btn-row"><button class="btn-primary" type="submit">Update achievement</button></div>
+                        </form>
+                        <form method="post" onsubmit="return confirm('Delete this achievement?');" style="margin-top:8px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_achievement">
+                            <input type="hidden" name="achievement_id" value="{{ item.id }}">
+                            <button class="btn-danger" type="submit">Delete achievement</button>
+                        </form>
+                    </div>
+                {% empty %}
+                    <div class="empty">No achievements yet.</div>
+                {% endfor %}
+            </div>
+        </section>
+
+        <section class="panel">
+            <div class="eyebrow">PROJECTS</div>
+            <h2>Manage projects</h2>
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="action" value="save_project">
+                <div class="form-grid">
+                    <div class="field full"><label>Title</label><input type="text" name="project_title" required></div>
+                    <div class="field"><label>Technology stack</label><input type="text" name="project_tech_stack"></div>
+                    <div class="field"><label>Status</label><input type="text" name="project_status" value="In Progress"></div>
+                    <div class="field full"><label>Project link</label><input type="url" name="project_link"></div>
+                    <div class="field full"><label>Description</label><textarea name="project_description"></textarea></div>
+                </div>
+                <div class="btn-row"><button class="btn-primary" type="submit">Add project</button></div>
+            </form>
+
+            <div style="margin-top:22px;">
+                {% for item in projects %}
+                    <div class="panel" style="margin:0 0 14px; padding:16px;">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="save_project">
+                            <input type="hidden" name="project_id" value="{{ item.id }}">
+                            <div class="form-grid">
+                                <div class="field full"><label>Title</label><input type="text" name="project_title" value="{{ item.title }}" required></div>
+                                <div class="field"><label>Technology stack</label><input type="text" name="project_tech_stack" value="{{ item.tech_stack }}"></div>
+                                <div class="field"><label>Status</label><input type="text" name="project_status" value="{{ item.status }}"></div>
+                                <div class="field full"><label>Project link</label><input type="url" name="project_link" value="{{ item.link }}"></div>
+                                <div class="field full"><label>Description</label><textarea name="project_description">{{ item.description }}</textarea></div>
+                            </div>
+                            <div class="btn-row"><button class="btn-primary" type="submit">Update project</button></div>
+                        </form>
+                        <form method="post" onsubmit="return confirm('Delete this project?');" style="margin-top:8px;">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="delete_project">
+                            <input type="hidden" name="project_id" value="{{ item.id }}">
+                            <button class="btn-danger" type="submit">Delete project</button>
+                        </form>
+                    </div>
+                {% empty %}
+                    <div class="empty">No projects yet.</div>
+                {% endfor %}
+            </div>
+        </section>
+    </div>
+</div>
+{% endblock %}

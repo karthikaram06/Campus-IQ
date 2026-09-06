@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}CampusIQ{% endblock %}</title>
+  <link rel="stylesheet" href="/static/campus/style.css">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">
+    <span class="brand-mark">C</span>
+    <span>Campus<span class="brand-accent">IQ</span></span>
+  </a>
+  <nav class="nav">
+    <a href="/">Home</a>
+    {% if user.is_authenticated %}
+      {% if user.student_profile %}
+        <a href="/student/dashboard/">Dashboard</a>
+        <a href="/student/attendance/">Attendance</a>
+        <a href="/student/timetable/">Timetable</a>
+        <a href="/ai/">AI Assistant</a>
+      {% elif user.teacher_profile %}
+        <a href="/teacher/dashboard/">Dashboard</a>
+        <a href="/ai/">AI Assistant</a>
+      {% endif %}
+      {% if user.is_staff %}<a href="/admin/">Admin</a>{% endif %}
+      <a class="nav-logout" href="{% if user.student_profile %}/student/logout/{% else %}/teacher/logout/{% endif %}">Logout</a>
+    {% else %}
+      <a href="/student/login/">Student</a>
+      <a href="/teacher/login/">Teacher</a>
+      <a href="/admin/">Admin</a>
+    {% endif %}
+  </nav>
+</header>
+<main class="page-shell">
+  {% if messages %}
+    <div class="messages">
+      {% for message in messages %}<div class="message {{ message.tags }}">{{ message }}</div>{% endfor %}
+    </div>
+  {% endif %}
+  {% block content %}{% endblock %}
+</main>
+<footer class="footer">CampusIQ · Smart College Management Portal</footer>
+</body>
+</html>

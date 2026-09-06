@@ -1,0 +1,38 @@
+{% extends 'campus/base.html' %}
+{% block title %}CampusIQ | Smart College Portal{% endblock %}
+{% block content %}
+<section class="hero-grid">
+  <div class="hero-copy">
+    <div class="eyebrow"><span class="live-dot"></span> SMART COLLEGE MANAGEMENT</div>
+    <h1>Everything your campus needs, <span>in one place.</span></h1>
+    <p class="hero-text">CampusIQ connects students, teachers and administrators through one secure academic portal — attendance, marks, timetable, achievements, leave and AI support.</p>
+    <div class="hero-actions">
+      <a class="btn btn-primary" href="/student/login/">Student Login <span>→</span></a>
+      <a class="btn btn-outline" href="/teacher/login/">Teacher Login</a>
+    </div>
+    <div class="trust-row"><span>✓ Role-based access</span><span>✓ Teacher approval</span><span>✓ Private student data</span></div>
+  </div>
+  <div class="hero-panel">
+    <div class="panel-top"><span>Campus overview</span><span class="status-chip">LIVE</span></div>
+    <div class="mini-stat-grid">
+      <div><strong>01</strong><span>Student portal</span></div>
+      <div><strong>02</strong><span>Teacher workspace</span></div>
+      <div><strong>03</strong><span>Admin control</span></div>
+      <div><strong>AI</strong><span>Smart assistant</span></div>
+    </div>
+    <div class="workflow">
+      <div class="workflow-item"><b>01</b><span>Student registers</span><i>→</i></div>
+      <div class="workflow-item"><b>02</b><span>Teacher verifies</span><i>→</i></div>
+      <div class="workflow-item"><b>03</b><span>Student gets access</span><i>✓</i></div>
+    </div>
+  </div>
+</section>
+
+<section class="section-head"><div><div class="eyebrow">PORTAL ACCESS</div><h2>Choose your workspace</h2></div></section>
+<section class="role-grid">
+  <article class="role-card student-card"><div class="role-icon">S</div><div class="role-label">FOR STUDENTS</div><h3>Your academic space</h3><p>View your own attendance, marks, timetable, achievements, projects and leave status.</p><a href="/student/register/" class="text-link">Create student account →</a></article>
+  <article class="role-card teacher-card"><div class="role-icon">T</div><div class="role-label">FOR TEACHERS</div><h3>Manage your class</h3><p>Approve students, record attendance by absent register numbers, update marks, achievements and leave.</p><a href="/teacher/register/" class="text-link">Create teacher account →</a></article>
+  <article class="role-card admin-card"><div class="role-icon">A</div><div class="role-label">FOR ADMIN</div><h3>Control the campus</h3><p>Configure departments, classes, two class teachers, subjects, timetable and academic records.</p><a href="/admin/" class="text-link">Open admin control →</a></article>
+</section>
+<section class="feature-strip"><div><strong>Attendance</strong><span>75% visibility</span></div><div><strong>Academics</strong><span>Marks & CGPA</span></div><div><strong>Timetable</strong><span>Class-wise grid</span></div><div><strong>AI Assistant</strong><span>Study & placement help</span></div></section>
+{% endblock %}

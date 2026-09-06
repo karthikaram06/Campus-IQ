@@ -1,0 +1,5 @@
+{% extends 'campus/base.html' %}
+{% block title %}Add Achievement | CampusIQ{% endblock %}
+{% block content %}
+<div class="form-card"><div class="eyebrow">STUDENT PROFILE</div><h2>Add achievement</h2><p class="hint">For {{ student.register_number }} · {{ student.user.first_name }}</p><form method="post">{% csrf_token %}<label>Achievement title<input name="title" required placeholder="Hackathon winner"></label><label>Issuer / Organization<input name="issuer" placeholder="College / Company / Organization"></label><label>Date<input type="date" name="date"></label><label>Description<textarea name="description" rows="5" placeholder="Short description"></textarea></label><button class="btn btn-primary" type="submit">Add achievement →</button></form></div>
+{% endblock %}

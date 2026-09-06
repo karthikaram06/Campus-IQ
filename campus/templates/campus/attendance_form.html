@@ -1,0 +1,163 @@
+{% load campus_tags %}
+{% extends 'campus/base.html' %}
+
+{% block title %}Attendance | CampusIQ{% endblock %}
+
+{% block content %}
+
+<div class="dashboard-head">
+
+    <div>
+
+        <div class="eyebrow">
+            ATTENDANCE ENTRY
+        </div>
+
+        <h1>
+            {{ subject.code }}
+            ·
+            {{ subject.name }}
+        </h1>
+
+        <p>
+            {{ classroom.name }}
+            ·
+            Enter only the absent register numbers.
+            Everyone else will automatically become Present.
+        </p>
+
+    </div>
+
+</div>
+
+
+<section class="form-card wide">
+
+    <form method="post">
+
+        {% csrf_token %}
+
+
+        <div class="attendance-entry-head">
+
+            <label>
+
+                Date
+
+                <input
+                    type="date"
+                    name="date"
+                    value="{{ selected_date }}"
+                    required
+                >
+
+            </label>
+
+
+            <div class="instruction">
+
+                <strong>
+                    Fast Attendance
+                </strong>
+
+                <span>
+                    Example:
+                    <b>
+                        23AD101 23AD118
+                    </b>
+                    or comma separated.
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <label>
+
+            Absent Register Numbers
+
+            <textarea
+                name="absent_registers"
+                rows="4"
+                placeholder="Enter absent register numbers only..."
+>{% for s in students %}{% if existing|get_item:s.id == 'A' %}{{ s.register_number }} {% endif %}{% endfor %}</textarea>
+
+        </label>
+
+
+        <div class="instruction">
+
+            <strong>
+                Important
+            </strong>
+
+            <span>
+                Students with an approved leave
+                on this date will automatically be marked
+                as <b>Leave</b>.
+            </span>
+
+        </div>
+
+
+        <button
+            class="btn btn-primary"
+            type="submit"
+        >
+            Save Attendance →
+        </button>
+
+    </form>
+
+
+    <div class="student-count">
+
+        {{ students|length }}
+        approved students in
+        {{ classroom.name }}
+
+    </div>
+
+
+    <div class="simple-list">
+
+        {% for s in students %}
+
+        <div>
+
+            <span>
+                {{ s.register_number }}
+            </span>
+
+
+            <span>
+
+                {{ s.user.first_name }}
+
+                {% if s.id in approved_leave_students %}
+
+                    <strong>
+                        — Leave
+                    </strong>
+
+                {% endif %}
+
+            </span>
+
+        </div>
+
+
+        {% empty %}
+
+        <p class="empty">
+            No approved students in this classroom.
+        </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+{% endblock %}

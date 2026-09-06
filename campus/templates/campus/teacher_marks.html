@@ -1,0 +1,7 @@
+{% load campus_tags %}
+{% extends 'campus/base.html' %}
+{% block title %}Marks | CampusIQ{% endblock %}
+{% block content %}
+<div class="dashboard-head"><div><div class="eyebrow">MARKS MANAGEMENT</div><h1>{{ subject.code }} · {{ subject.name }}</h1><p>{{ classroom.name }} · Internal and external marks are limited to 0–50.</p></div></div>
+<section class="form-card wide"><form method="post">{% csrf_token %}<div class="tablewrap"><table><thead><tr><th>Register No.</th><th>Student</th><th>Internal / 50</th><th>External / 50</th><th>Total</th></tr></thead><tbody>{% for s in students %}{% with m=current|get_item:s.id %}<tr><td><strong>{{ s.register_number }}</strong></td><td>{{ s.user.first_name }}</td><td><input class="mark-input" type="number" min="0" max="50" name="internal_{{ s.id }}" value="{{ m.internal|default:'0' }}"></td><td><input class="mark-input" type="number" min="0" max="50" name="external_{{ s.id }}" value="{{ m.external|default:'0' }}"></td><td><strong>{% if m %}{{ m.total }}{% else %}0{% endif %}</strong></td></tr>{% endwith %}{% empty %}<tr><td colspan="5" class="empty">No approved students in this class.</td></tr>{% endfor %}</tbody></table></div><button class="btn btn-primary" type="submit">Save all marks →</button></form></section>
+{% endblock %}
